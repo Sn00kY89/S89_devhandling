@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>S89 Studio Handling</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- ═══════════════════════════════════════ APP ═══════════════════════════════════════ -->
+    <div id="app" class="hidden">
+        <div class="dh-window">
+
+            <!-- SIDEBAR -->
+            <aside class="dh-sidebar">
+
+                <div class="dh-logo">
+                    <div class="dh-logo-icon">
+                        <i class="fa-solid fa-gauge-high"></i>
+                    </div>
+                    <div class="dh-logo-text">
+                        <span class="dh-logo-name" data-i18n="ui_title"
+                            style="font-family: &quot;Space Grotesk&quot;">S89<br>STUDIO HANDLING</span>
+                        <span class="dh-logo-sub" data-i18n="ui_subtitle">Editor v2.0</span>
+                    </div>
+                </div>
+
+                <nav class="dh-nav">
+                    <span class="dh-nav-section" data-i18n="ui_performance">Performance</span>
+
+                    <button onclick="SwitchTab('engine')" class="nav-btn active" id="tab-engine">
+                        <span class="nav-icon"><i class="fa-solid fa-bolt"></i></span>
+                        <span data-i18n="ui_engine">Engine &amp; Power</span>
+                    </button>
+                    <button onclick="SwitchTab('brakes')" class="nav-btn" id="tab-brakes">
+                        <span class="nav-icon"><i class="fa-solid fa-dharmachakra"></i></span>
+                        <span data-i18n="ui_brakes">Brakes</span>
+                    </button>
+                    <button onclick="SwitchTab('traction')" class="nav-btn" id="tab-traction">
+                        <span class="nav-icon"><i class="fa-solid fa-road"></i></span>
+                        <span data-i18n="ui_traction">Traction &amp; Grip</span>
+                    </button>
+                    <button onclick="SwitchTab('suspension')" class="nav-btn" id="tab-suspension">
+                        <span class="nav-icon"><i class="fa-solid fa-arrows-up-down"></i></span>
+                        <span data-i18n="ui_suspension">Suspension</span>
+                    </button>
+
+                    <span class="dh-nav-section" data-i18n="ui_advanced">Advanced</span>
+
+                    <button onclick="SwitchTab('physics')" class="nav-btn" id="tab-physics">
+                        <span class="nav-icon"><i class="fa-solid fa-atom"></i></span>
+                        <span data-i18n="ui_physics">Physics &amp; Aero</span>
+                    </button>
+                </nav>
+
+                <div class="dh-sidebar-footer">
+                    <button onclick="OpenTelemetryModal()" class="dh-btn dh-btn-teal dh-btn-full">
+                        <i class="fa-solid fa-chart-line"></i>
+                        <span data-i18n="ui_telemetry">Telemetry</span>
+                    </button>
+                    <button onclick="OpenModsModal()" class="dh-btn dh-btn-blue dh-btn-full">
+                        <i class="fa-solid fa-wrench"></i>
+                        <span data-i18n="ui_mods">Vehicle Mods</span>
+                    </button>
+                    <button onclick="ForceRefresh()" class="dh-btn dh-btn-ghost dh-btn-full">
+                        <i class="fa-solid fa-rotate"></i>
+                        <span data-i18n="ui_refresh">Refresh Flags</span>
+                    </button>
+                    <div class="dh-footer-row">
+                        <button onclick="ExportToClipboard()" class="dh-btn dh-btn-ghost dh-btn-half">
+                            <i class="fa-regular fa-copy"></i>
+                            <span data-i18n="ui_xml">XML</span>
+                        </button>
+                        <button onclick="OpenResetModal()" class="dh-btn dh-btn-red dh-btn-half">
+                            <i class="fa-solid fa-undo"></i>
+                            <span data-i18n="ui_reset">Reset</span>
+                        </button>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- MAIN -->
+            <div class="dh-main">
+
+                <!-- HEADER -->
+                <header class="dh-header">
+                    <div class="dh-header-left">
+                        <div class="dh-breadcrumb">
+                            <span data-i18n="ui_config">Configuration</span>
+                            <span class="dh-breadcrumb-sep"><i class="fa-solid fa-chevron-right"
+                                    style="font-size:7px"></i></span>
+                            <span class="dh-breadcrumb-cur" id="breadcrumb-cat">Engine</span>
+                        </div>
+                        <h1 class="dh-page-title" id="page-title">ENGINE &amp; POWER</h1>
+                    </div>
+
+                    <div class="dh-header-center">
+                        <div class="dh-veh-chip">
+                            <div class="dh-veh-segment" style="width: 100px; text-align: center; align-items: center">
+                                <span class="dh-veh-label" data-i18n="ui_model" style="text-align: center">Model</span>
+                                <span class="dh-veh-value" id="veh-name" style="text-align: center">LOADING...</span>
+                            </div>
+                            <div class="dh-veh-segment" style="width: 100px; align-items: center">
+                                <span class="dh-veh-label" data-i18n="ui_plate" style="text-align: center">Plate</span>
+                                <span class="dh-veh-value" id="veh-plate" style="text-align: center">---</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="dh-header-right">
+                        <button onclick="OpenLanguageModal()" class="dh-icon-btn" title="Language">
+                            <i class="fa-solid fa-globe"></i>
+                        </button>
+                        <button onclick="OpenLimitsModal()" class="dh-icon-btn" title="Parameter Limits">
+                            <i class="fa-solid fa-sliders"></i>
+                        </button>
+                        <button onclick="CloseUI()" class="dh-icon-btn dh-icon-btn-red" title="Close">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    </div>
+                </header>
+
+                <!-- CARDS -->
+                <div class="dh-content">
+                    <div id="cards-container"></div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- ─── TOAST ─── -->
+    <div id="copy-toast" class="hidden">
+        <div class="toast-icon"><i class="fa-solid fa-check"></i></div>
+        <span class="toast-text" data-i18n="ui_copied">Copied to Clipboard</span>
+    </div>
+
+    <!-- ─── RESET MODAL ─── -->
+    <div id="reset-modal" class="dh-overlay hidden">
+        <div class="dh-modal" style="width:340px;text-align:center;">
+            <div class="modal-icon-ring modal-icon-ring-red">
+                <i class="fa-solid fa-undo"></i>
+            </div>
+            <div class="modal-title" data-i18n="ui_reset_title" style="margin-bottom:6px;">Reset Handling?</div>
+            <p class="modal-body-text" data-i18n="ui_reset_desc">This will restore all parameters to their initial
+                state. This action cannot be undone.</p>
+            <div class="modal-actions">
+                <button onclick="ConfirmReset()" class="modal-btn modal-btn-confirm-red" data-i18n="ui_reset">Reset
+                    All</button>
+                <button onclick="CloseResetModal()" class="modal-btn modal-btn-cancel"
+                    data-i18n="ui_cancel">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ─── LANGUAGE MODAL ─── -->
+    <div id="language-modal" class="dh-overlay hidden">
+        <div class="dh-modal" style="width:380px;">
+            <div class="modal-header">
+                <div>
+                    <div class="modal-title">Language</div>
+                    <div class="modal-subtitle">Choose your preferred interface language</div>
+                </div>
+                <button onclick="CloseLanguageModal()" class="modal-close"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="lang-grid">
+                <button onclick="setLanguage('en')" class="lang-btn">🇬🇧 English</button>
+                <button onclick="setLanguage('it')" class="lang-btn">🇮🇹 Italiano</button>
+                <button onclick="setLanguage('es')" class="lang-btn">🇪🇸 Español</button>
+                <button onclick="setLanguage('fr')" class="lang-btn">🇫🇷 Français</button>
+                <button onclick="setLanguage('de')" class="lang-btn">🇩🇪 Deutsch</button>
+                <button onclick="setLanguage('pt')" class="lang-btn">🇧🇷 Português</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ─── LIMITS MODAL ─── -->
+    <div id="limits-modal" class="dh-overlay hidden">
+        <div class="dh-modal" style="width:780px;height:78vh;display:flex;flex-direction:column;">
+            <div class="modal-header">
+                <div>
+                    <div class="modal-title" data-i18n="ui_limits_title">Parameter Limits</div>
+                    <div class="modal-subtitle" data-i18n="ui_limits_desc">Adjust minimum and maximum slider values
+                    </div>
+                </div>
+                <div style="display:flex;align-items:center;gap:10px;">
+                    <div class="modal-search-wrap">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input type="text" id="limits-search" class="modal-search" oninput="FilterLimits()"
+                            data-i18n-placeholder="ui_search" placeholder="Search...">
+                    </div>
+                    <button onclick="CloseLimitsModal()" class="modal-close"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+            </div>
+            <div class="modal-scroll">
+                <div id="limits-container"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ─── TELEMETRY DURATION MODAL ─── -->
+    <div id="telemetry-duration-modal" class="dh-overlay hidden">
+        <div class="dh-modal" style="width:400px;">
+            <div class="modal-header">
+                <div>
+                    <div class="modal-title" data-i18n="ui_tel_title">Telemetry Session</div>
+                    <div class="modal-subtitle" data-i18n="ui_tel_desc">Configure and start a performance recording
+                    </div>
+                </div>
+                <button onclick="CloseTelemetryModal()" class="modal-close"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="tel-options-wrap">
+                <div class="tel-option-row">
+                    <span class="tel-option-label" data-i18n="ui_speed_unit">Speed Unit</span>
+                    <div class="unit-btn-group">
+                        <button id="btn-unit-kmh" onclick="setTelemetryUnit('kmh')"
+                            class="unit-btn active">KM/H</button>
+                        <button id="btn-unit-mph" onclick="setTelemetryUnit('mph')" class="unit-btn">MPH</button>
+                    </div>
+                </div>
+                <div class="tel-option-row">
+                    <span class="tel-option-label" data-i18n="ui_reopen_menu">Reopen Menu After</span>
+                    <label class="toggle-label">
+                        <input type="checkbox" id="reopen-ui-toggle" checked>
+                        <div class="toggle-track"></div>
+                    </label>
+                </div>
+            </div>
+            <div class="tel-dur-btns" style="margin-bottom:20px;">
+                <button onclick="confirmTelemetry(30)" class="tel-dur-btn" data-i18n="ui_30_sec">30 Seconds</button>
+                <button onclick="confirmTelemetry(60)" class="tel-dur-btn tel-dur-btn-primary" data-i18n="ui_60_sec">60
+                    Seconds</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ─── MODS MODAL ─── -->
+    <div id="mods-modal" class="dh-overlay hidden">
+        <div class="dh-modal" style="width:430px;">
+            <div class="modal-header">
+                <div>
+                    <div class="modal-title" data-i18n="ui_mods_title">Performance Upgrades</div>
+                    <div class="modal-subtitle" data-i18n="ui_mods_desc">Toggle vehicle modifications</div>
+                </div>
+                <button onclick="CloseModsModal()" class="modal-close"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="mods-list" id="mods-container">
+                <div class="mod-item">
+                    <div>
+                        <div class="mod-item-title">Engine Tuning</div>
+                        <div class="mod-item-sub" id="stock-engine">Stock: Lvl 0</div>
+                    </div>
+                    <label class="toggle-label">
+                        <input type="checkbox" id="mod-engine">
+                        <div class="toggle-track"></div>
+                    </label>
+                </div>
+                <div class="mod-item">
+                    <div>
+                        <div class="mod-item-title">Race Brakes</div>
+                        <div class="mod-item-sub" id="stock-brakes">Stock: Lvl 0</div>
+                    </div>
+                    <label class="toggle-label">
+                        <input type="checkbox" id="mod-brakes">
+                        <div class="toggle-track"></div>
+                    </label>
+                </div>
+                <div class="mod-item">
+                    <div>
+                        <div class="mod-item-title">Transmission</div>
+                        <div class="mod-item-sub" id="stock-transmission">Stock: Lvl 0</div>
+                    </div>
+                    <label class="toggle-label">
+                        <input type="checkbox" id="mod-transmission">
+                        <div class="toggle-track"></div>
+                    </label>
+                </div>
+                <div class="mod-item">
+                    <div>
+                        <div class="mod-item-title">Suspension</div>
+                        <div class="mod-item-sub" id="stock-suspension">Stock: Lvl 0</div>
+                    </div>
+                    <label class="toggle-label">
+                        <input type="checkbox" id="mod-suspension">
+                        <div class="toggle-track"></div>
+                    </label>
+                </div>
+                <div class="mod-item">
+                    <div>
+                        <div class="mod-item-title">Turbo</div>
+                        <div class="mod-item-sub" id="stock-turbo">Stock: Disabled</div>
+                    </div>
+                    <label class="toggle-label">
+                        <input type="checkbox" id="mod-turbo">
+                        <div class="toggle-track"></div>
+                    </label>
+                </div>
+            </div>
+            <div class="mods-actions">
+                <button onclick="ApplyVehicleMods()" class="modal-btn modal-btn-confirm-blue" style="flex:2">Apply
+                    Upgrades</button>
+                <button onclick="CloseModsModal()" class="modal-btn modal-btn-cancel" style="flex:1"
+                    data-i18n="ui_cancel">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ─── TELEMETRY HUD ─── -->
+    <div id="telemetry-ui" class="hidden">
+        <div class="tel-topbar">
+            <div class="tel-rec-dot">
+                <div class="tel-dot"></div>
+                <span id="telemetry-countdown">REC — 60s</span>
+            </div>
+            <span class="tel-esc-hint">ESC to stop</span>
+        </div>
+
+        <div class="tel-speed-row">
+            <div class="tel-speed-left">
+                <span id="tel-speed">0</span>
+                <span id="tel-unit-label">KM/H</span>
+            </div>
+            <div class="tel-speed-right">
+                <span class="tel-stat"><span id="tel-gear">1</span><span class="tel-stat-unit"
+                        data-i18n="ui_gr">GR</span></span>
+                <span class="tel-stat"><span id="tel-ts">0</span><span class="tel-stat-unit"
+                        data-i18n="ui_ts">TS</span></span>
+            </div>
+        </div>
+
+        <div class="tel-body">
+            <div class="tel-splits">
+                <div class="split-row">
+                    <span id="label-0-100" class="split-name">0-100</span>
+                    <span class="split-prev" id="old-timer-100">--</span>
+                    <span class="split-curr" id="timer-100">--</span>
+                </div>
+                <div class="split-row">
+                    <span class="split-name" data-i18n="ui_1_4_mile">1/4 mile</span>
+                    <span class="split-prev" id="old-timer-qmile">--</span>
+                    <span class="split-curr" id="timer-qmile">--</span>
+                </div>
+                <div class="split-row">
+                    <span id="label-0-150" class="split-name">0-150</span>
+                    <span class="split-prev" id="old-timer-150">--</span>
+                    <span class="split-curr" id="timer-150">--</span>
+                </div>
+                <div class="split-row">
+                    <span class="split-name" data-i18n="ui_1_2_mile">1/2 mile</span>
+                    <span class="split-prev" id="old-timer-hmile">--</span>
+                    <span class="split-curr" id="timer-hmile">--</span>
+                </div>
+                <div class="split-row">
+                    <span id="label-0-200" class="split-name">0-200</span>
+                    <span class="split-prev" id="old-timer-200">--</span>
+                    <span class="split-curr" id="timer-200">--</span>
+                </div>
+            </div>
+            <div class="tel-graph">
+                <canvas id="speedGraph"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+
+</body>
+
+</html>

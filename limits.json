@@ -1,0 +1,10 @@
+{
+    "fInitialDragCoeff": {
+        "min": 1,
+        "max": 120
+    },
+    "fAntiRollBarForce": {
+        "max": 2,
+        "min": 0
+    }
+}
